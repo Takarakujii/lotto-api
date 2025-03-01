@@ -81,7 +81,7 @@ class AccountController {
                     username: res.locals.username,
                     email: userInfo?.email,
                     birth_date: userInfo?.birth_date,
-                    balance: userInfo?.balance,
+                    balance: userInfo?.user_balance,
                 },
             });
         } catch (err) {
