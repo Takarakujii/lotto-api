@@ -14,7 +14,7 @@ class User {
      * @param {string} birthDate - The birth date of the user.
      * @returns {Promise<Object>} - The result of the database operation.
      */
-    async create(username, email, password, birthDate) {
+    async create(username, email, password, birthdate) {
         try {
             // Check if the username or email already exists
             const [existingUser] = await connection.execute(
@@ -42,7 +42,7 @@ class User {
             // Insert the new user into the database
             const [result] = await connection.execute(
                 'INSERT INTO users (username, email, password, birth_date, user_balance) VALUES (?, ?, ?, ?, ?)',
-                [username, email, hashPassword, birthDate, 0.00] // Default balance is 0.00
+                [username, email, hashPassword, birthdate, 0.00] // Default balance is 0.00
             );
 
             return result;

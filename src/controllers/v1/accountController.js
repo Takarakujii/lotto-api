@@ -12,10 +12,10 @@ class AccountController {
      * @param {Object} res - The response object.
      */
     async create(req, res) {
-        const { username, email, password, birthDate } = req.body || {};
+        const { username, email, password, birthdate } = req.body || {};
 
         try {
-            const response = await this.user.create(username, email, password, birthDate);
+            const response = await this.user.create(username, email, password, birthdate);
 
             res.send({
                 success: true,
@@ -27,8 +27,10 @@ class AccountController {
             res.send({
                 success: false,
                 message: err.message === 'username' || err.message === 'email' ? err.message : 'Failed to create account',
+                
             });
         }
+        
     }
 
     /**

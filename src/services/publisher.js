@@ -1,61 +1,57 @@
-import express from "express";
-import { createServer } from "http";
-import { Server } from "socket.io";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
-const server = createServer(app);
+const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: "*", // Allow all origins (for development)
-    },
+  cors: {
+    origin: "http://localhost:5173", // Change this to your frontend URL
+    credentials: true
+  }
 });
 
-// Serve static frontend files from the "public" folder
-app.use(express.static(path.join(__dirname, "../public")));
+let countdown = 60; // Initial countdown time
+let countdownActive = false; // Prevent multiple timers
 
-// Handle root route
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
-});
-
-// Countdown logic
-let countdown = 60; 
-
-// Function to start the countdown
+// Function to start countdown
 const startCountdown = () => {
-    setInterval(() => {
-        if (countdown > 0) {
-            countdown--;
-        } else {
-            countdown = 60; // Reset to 60 seconds
-        }
-        io.emit('countdown', countdown); // io.emit means ibobroadcast nya sa lahat ng subscribers
-    }, 1000); // Update every second
+  if (!countdownActive) {
+    countdownActive = true;
+
+    const timer = setInterval(() => {
+      countdown--;
+
+      // Broadcast countdown to all clients
+      io.emit('countdown', countdown);
+
+      if (countdown <= 0) {
+        clearInterval(timer);
+        countdown = 60; // Reset countdown
+        countdownActive = false;
+      }
+    }, 1000);
+  }
 };
 
-// Socket.io connection handler
+// Handle WebSocket connections
 io.on('connection', (socket) => {
-    console.log('A subscriber connected:', socket.id);
+  console.log('A user connected');
 
-    // Send the current countdown value to the newly connected subscriber
-    socket.emit('countdown', countdown);
+  // Send the current countdown to new clients
+  socket.emit('countdown', countdown);
 
-    // Handle subscriber disconnect
-    socket.on('disconnect', () => {
-        console.log('A subscriber disconnected:', socket.id);
-    });
+  // Start countdown when a user logs in
+  socket.on('user_logged_in', () => {
+    startCountdown();
+  });
+
+  // Disconnect event
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
 });
 
-// Start the countdown when the server starts
-startCountdown();
-// Start the publisher server
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+server.listen(8080, () => {
+  console.log('Server running on port 8080');
 });
-
