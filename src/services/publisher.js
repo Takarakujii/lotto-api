@@ -6,15 +6,15 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Change this to your frontend URL
+    origin: "http://localhost:5173", 
     credentials: true
   }
 });
 
-let countdown = 60; // Initial countdown time
-let countdownActive = false; // Prevent multiple timers
+let countdown = 60; 
+let countdownActive = false; 
 
-// Function to start countdown
+
 const startCountdown = () => {
   if (!countdownActive) {
     countdownActive = true;
@@ -22,12 +22,11 @@ const startCountdown = () => {
     const timer = setInterval(() => {
       countdown--;
 
-      // Broadcast countdown to all clients
       io.emit('countdown', countdown);
 
       if (countdown <= 0) {
         clearInterval(timer);
-        countdown = 60; // Reset countdown
+        countdown = 60; 
         countdownActive = false;
       }
     }, 1000);

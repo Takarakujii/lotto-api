@@ -4,10 +4,17 @@ import BetController from "../../controllers/v1/betController.js";
 import authentication from "../../middlewares/authentication.js";
 
 const betRouter = new Router();
-const bet = new BetController();
+const betController = new BetController();
 
 // Apply authentication middleware
-// POST /bet { "betAmount": 50 }
-betRouter.post("/", authentication, bet.placeBet.bind(bet));
+betRouter.use(authentication);
+
+// Create a new bet
+// POST /bets { "betAmount": 100, "betNumber": "12-34-56-78-90-12" }
+betRouter.post("/", betController.createBet.bind(betController));
+
+// Delete a bet by ID
+// DELETE /bets/:betId
+betRouter.delete("/:betId", betController.deleteBet.bind(betController));
 
 export default betRouter;

@@ -1,55 +1,72 @@
-// controller/v1/betController.js
-import Bet from "../../models/Bet.js";
+// controllers/betController.js
+import Bet from "../../models/bet.js";
 
 class BetController {
     constructor() {
         this.bet = new Bet();
     }
 
-    async placeBet(req, res) {
+    /**
+     * Handle creating a new bet.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    async createBet(req, res) {
         try {
             const { betAmount, betNumber } = req.body || {};
             const userId = res.locals.user_id; // Extracted from authentication middleware
 
-            if (!betAmount || betAmount <= 0) {
+            if (!betAmount || !betNumber) {
                 return res.send({
                     success: false,
-                    message: "Invalid bet amount",
+                    message: "Bet amount and number are required",
                 });
             }
 
-            if (!betNumber) {
+            if (betAmount <= 0) {
                 return res.send({
                     success: false,
-                    message: "Bet number is required",
+                    message: "Bet amount must be greater than 0",
                 });
             }
 
-            // Validate bet number format "xx-xx-xx-xx-xx-xx"
-            const betNumberRegex = /^[0-9]{2}(?:-[0-9]{2}){5}$/;
-            if (!betNumberRegex.test(betNumber)) {
-                return res.send({
-                    success: false,
-                    message: "Invalid bet number format. Expected format: xx-xx-xx-xx-xx-xx (e.g., 12-34-56-78-90-12)",
-                });
-            }
-
-            // Retrieve the current round ID.
-            // If not set, return an error instead of passing undefined.
-            const currentRoundId = global.currentRoundId;
-            if (!currentRoundId) {
-                return res.send({
-                    success: false,
-                    message: "No active round. Please try again later.",
-                });
-            }
-
-            const result = await this.bet.placeBet(userId, betAmount, betNumber, currentRoundId);
+            const result = await this.bet.createBet(userId, betAmount, betNumber);
 
             res.send({
                 success: true,
                 message: "Bet placed successfully",
-                result,
+                data: result,
+            });
+        } catch (err) {
+            res.send({
+                success: false,
+                message: err.toString(),
+            });
+        }
+    }
+
+    /**
+     * Handle deleting a bet.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    async deleteBet(req, res) {
+        try {
+            const { betId } = req.params;
+
+            if (!betId) {
+                return res.send({
+                    success: false,
+                    message: "Bet ID is required",
+                });
+            }
+
+            const result = await this.bet.deleteBet(betId);
+
+            res.send({
+                success: true,
+                message: "Bet deleted successfully",
+                data: result,
             });
         } catch (err) {
             res.send({
