@@ -3,6 +3,9 @@ import { Router } from 'express';
 import accountRouter from './accountRoutes.js';
 import topupRouter from './topUpRoutes.js';
 import betRouter from './betRoutes.js';
+import drawRouter from './drawRoutes.js';
+import winResultRouter from './winResultRoutes.js';
+import potRouter from './potRoutes.js';
 
 
 const v1 = new Router();
@@ -12,6 +15,10 @@ const v1 = new Router();
 v1.use('/account', accountRouter);
 v1.use('/topup', topupRouter);
 v1.use('/bet', betRouter);
+v1.use('/draw', drawRouter);
+v1.use('/winResult', winResultRouter);
+v1.use('/pot', potRouter);
+
 
 
 

@@ -22,7 +22,7 @@ app.use(cors({
         }
     },
     credentials: true, 
-    allowedHeaders: ['Content-Type', 'Authorization', 'apikey', 'token'],
+    allowedHeaders: ['Content-Type', 'apikey', 'token'],
 }));
 
 app.use(morgan('combined'));
