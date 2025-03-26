@@ -13,7 +13,7 @@ class Draw {
         try {
             // Generate a random winning number (e.g., "12-34-56-78-90-12")
             const winningNumber = Array.from({ length: 6 }, () =>
-                Math.floor(Math.random() * 100)
+                Math.floor(Math.random() * 46)
                     .toString()
                     .padStart(2, "0")
             ).join("-");
