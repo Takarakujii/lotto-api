@@ -27,6 +27,8 @@ class WinResultController {
             });
         }
     }
+
+    
 }
 
 export default WinResultController;

@@ -11,7 +11,9 @@ class PotController {
      * @param {Object} res - The response object.
      */
     async getPot(req, res) {
-        try {
+        try {console.log('Get pot amount request received');
+console.log('Update pot amount request received');
+console.log('Roll over pot request received');
             const potAmount = await this.pot.getPot();
 
             res.status(200).send({

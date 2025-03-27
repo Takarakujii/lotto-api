@@ -23,6 +23,8 @@ class WinResult {
             throw err;
         }
     }
+
+    
 }
 
 export default WinResult;
