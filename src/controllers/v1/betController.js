@@ -7,40 +7,51 @@ class BetController {
     }
 
     /**
-     * Handle creating a new bet.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Create a new bet
      */
     async createBet(req, res) {
         try {
-            const { betAmount, betNumber } = req.body || {};
-            const userId = res.locals.user_id; // Extracted from authentication middleware
+            const { betAmount, betNumber } = req.body;
+            const userId = res.locals.user_id;
 
             if (!betAmount || !betNumber) {
-                return res.send({
+                return res.status(400).send({
                     success: false,
-                    message: "Bet amount and number are required",
-                });
-            }
-
-            if (betAmount <= 0) {
-                return res.send({
-                    success: false,
-                    message: "Bet amount must be greater than 0",
+                    message: "Bet amount and number are required"
                 });
             }
 
             const result = await this.bet.createBet(userId, betAmount, betNumber);
 
-            res.send({
+            res.status(201).send({
                 success: true,
                 message: "Bet placed successfully",
-                data: result,
+                betId: result.insertId
             });
         } catch (err) {
-            res.send({
+            res.status(400).send({
                 success: false,
-                message: err.toString(),
+                message: err.message
+            });
+        }
+    }
+
+    /**
+     * Get all bets for the current user
+     */
+    async getUserBets(req, res) {
+        try {
+            const userId = res.locals.user_id;
+            const bets = await this.bet.getUserBets(userId);
+
+            res.status(200).send({
+                success: true,
+                data: bets
+            });
+        } catch (err) {
+            res.status(500).send({
+                success: false,
+                message: err.message
             });
         }
     }

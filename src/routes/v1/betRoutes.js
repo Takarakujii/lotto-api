@@ -13,6 +13,9 @@ betRouter.use(authentication);
 // POST /bets { "betAmount": 100, "betNumber": "12-34-56-78-90-12" }
 betRouter.post("/", betController.createBet.bind(betController));
 
+// Get user's bet history - GET /bets
+betRouter.get("/", betController.getUserBets.bind(betController));
+
 // Delete a bet by ID
 // DELETE /bets/:betId
 betRouter.delete("/:betId", betController.deleteBet.bind(betController));

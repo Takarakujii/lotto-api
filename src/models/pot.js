@@ -11,16 +11,28 @@ class Pot {
      */
     async getPot() {
         try {
-            const [pot] = await this.connection.execute(
-                "SELECT pot_amount FROM pot"
+            // First check if pot exists
+            const [potExists] = await this.connection.execute(
+                "SELECT 1 FROM pot LIMIT 1"
             );
-            return pot?.[0]?.pot_amount || 100000; // Modified to match Sample 1's default
+            
+            // If pot doesn't exist, initialize it
+            if (potExists.length === 0) {
+                await this.connection.execute(
+                    "INSERT INTO pot (pot_amount) VALUES (1000000)"
+                );
+            }
+    
+            // Now get the pot amount
+            const [pot] = await this.connection.execute(
+                "SELECT pot_amount FROM pot LIMIT 1"
+            );
+            return pot[0].pot_amount;
         } catch (err) {
             console.error("<error> pot.getPot", err);
             throw err;
         }
     }
-
     /**
      * Update the pot amount.
      * @param {number} amount - The amount to add to the pot.

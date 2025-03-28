@@ -16,7 +16,7 @@ v1.use('/account', accountRouter);
 v1.use('/topup', topupRouter);
 v1.use('/bet', betRouter);
 v1.use('/draw', drawRouter);
-v1.use('/winResult', winResultRouter);
+v1.use('/win-result', winResultRouter);
 v1.use('/pot', potRouter);
 
 
