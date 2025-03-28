@@ -11,12 +11,13 @@ class DrawController {
      */
     async generateWinningNumber(req, res) {
         try {
-            const winningNumber = await this.draw.generateWinningNumber();
+            const result = await this.draw.generateWinningNumber();
             
             res.status(200).send({
                 success: true,
-                message: "Winning number generated",
-                winningNumber,
+                message: "Winning number generated and prizes distributed",
+                winningNumber: result.winningNumber,
+                distribution: result.distributionResult,
                 timestamp: new Date().toISOString()
             });
         } catch (err) {
@@ -26,7 +27,6 @@ class DrawController {
             });
         }
     }
-
     /**
      * Get last draw results
      */
@@ -34,7 +34,6 @@ class DrawController {
         try {
             const lastDraw = await this.draw.getLastDraw();
             
-            // Check if this is a default empty draw
             const isEmptyDraw = lastDraw.winning_number === '00-00-00-00-00-00' && 
                               new Date(lastDraw.created_at).getTime() === new Date(0).getTime();
             
@@ -44,7 +43,6 @@ class DrawController {
                 pot_amount: lastDraw.pot_amount || 0,
                 draw_time: lastDraw.created_at,
                 is_empty: isEmptyDraw
-             
             });
         } catch (err) {
             res.status(500).send({

@@ -44,11 +44,11 @@ class Pot {
                 "SELECT pot_amount FROM pot ORDER BY pot_id DESC LIMIT 1"
             );
 
-            let currentPot = result.length > 0 ? result[0].pot_amount : 100000;
+            let currentPot = result.length > 0 ? result[0].pot_amount : 0;
             let updatedPot = currentPot + amount;    
 
             await this.connection.execute(
-                "UPDATE pot SET pot_amount = ? WHERE pot_id = 1", // Simplified to use fixed ID like Sample 2
+                "UPDATE pot SET pot_amount = ? WHERE pot_id = 1", 
                 [updatedPot]
             );
             return updatedPot;
@@ -58,23 +58,7 @@ class Pot {
         }
     }
 
-    /**
-     * Roll over the pot by adding user bets.
-     * @param {number} userBets - The amount from user bets to add to pot.
-     * @returns {Promise<Object>} - The result of the database operation.
-     */
-    async rollOverPot(userBets) {
-        try {
-            const [result] = await this.connection.execute(
-                "UPDATE pot SET pot_amount = pot_amount + ? WHERE pot_id = 1",
-                [userBets]
-            );
-            return result;
-        } catch (err) {
-            console.error("<error> pot.rollOverPot", err);
-            throw err;
-        }
-    }
+   
 }
 
 export default Pot;

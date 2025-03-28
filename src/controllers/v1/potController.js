@@ -11,22 +11,22 @@ class PotController {
      * @param {Object} res - The response object.
      */
     async getPot(req, res) {
-        try {
-            console.log('Get pot amount request received');
-            const potAmount = await this.pot.getPot();
-    
-            res.status(200).send({
-                success: true,
-                potAmount,
-            });
-        } catch (err) {
-            console.error('Error getting pot:', err);
-            res.status(500).send({
-                success: false,
-                message: err.toString(),
-            });
-        }
+    try {
+        console.log('Get pot amount request received');
+        const potAmount = await this.pot.getPot();
+
+        res.status(200).send({
+            success: true,
+            potAmount,
+        });
+    } catch (err) {
+        console.error('Error getting pot:', err);
+        res.status(500).send({
+            success: false,
+            message: err.toString(),
+        });
     }
+}
 
     /**
      * Update the pot amount.
@@ -59,27 +59,6 @@ class PotController {
         }
     }
 
-    /**
-     * Roll over the pot if there is no winner.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
-     */
-    async rollOverPot(req, res) {
-        try {
-            const result = await this.pot.rollOverPot();
-
-            res.status(200).send({
-                success: true,
-                message: "Pot rolled over successfully",
-                data: result,
-            });
-        } catch (err) {
-            res.status(500).send({
-                success: false,
-                message: err.toString(),
-            });
-        }
-    }
 }
 
 export default PotController;

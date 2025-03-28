@@ -37,40 +37,36 @@ class Bet {
             if (!this.validateBetNumber(betNumber)) {
                 throw new Error("Invalid bet format. Requires 6 unique numbers (1-47) in xx-xx-xx-xx-xx-xx format");
             }
-
-            await this.connection.beginTransaction();
-
-            // 1. Deduct from user balance
+    
+    
+            //Deduct from user balance
             const [userUpdate] = await this.connection.execute(
                 "UPDATE users SET user_balance = user_balance - ? WHERE user_id = ? AND user_balance >= ?",
                 [betAmount, userId, betAmount]
             );
-
+    
             if (userUpdate.affectedRows === 0) {
                 throw new Error("Insufficient balance or user not found");
             }
-
-            // 2. Add to pot (100% of bet amount)
+    
+           
             await this.connection.execute(
                 "UPDATE pot SET pot_amount = pot_amount + ? WHERE pot_id = 1",
                 [betAmount]
             );
-
-            // 3. Create the bet
+    
+            //Create the bet without last_draw_id huhu mali gawa ko yata
             const [result] = await this.connection.execute(
                 "INSERT INTO bets (user_id, bet_amount, bet_number) VALUES (?, ?, ?)",
-                [userId, betAmount, betNumber]
+                [userId, betAmount, betNumber] 
             );
-
-            await this.connection.commit();
+    
             return result;
         } catch (err) {
-            await this.connection.rollback();
             console.error("<error> bet.createBet", err);
             throw err;
         }
     }
-
     /**
      * Get all bets for a user
      * @param {number} userId - The user ID
@@ -79,9 +75,9 @@ class Bet {
     async getUserBets(userId) {
         try {
             const [bets] = await this.connection.execute(
-                `SELECT b.*, ld.winning_number, wr.winning_prize 
+                `SELECT b.*, d.winning_number, wr.winning_prize 
                  FROM bets b
-                 LEFT JOIN last_draw ld ON b.last_draw_id = ld.last_draw_id
+                 LEFT JOIN draw ld ON b.draw_id = d.draw_id
                  LEFT JOIN win_result wr ON b.bet_id = wr.bet_id
                  WHERE b.user_id = ?
                  ORDER BY b.created_at DESC`,
