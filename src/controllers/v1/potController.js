@@ -11,22 +11,22 @@ class PotController {
      * @param {Object} res - The response object.
      */
     async getPot(req, res) {
-    try {
-        console.log('Get pot amount request received');
-        const potAmount = await this.pot.getPot();
+        try {
+            console.log('Get pot amount request received');
+            const potAmount = await this.pot.getPot();
 
-        res.status(200).send({
-            success: true,
-            potAmount,
-        });
-    } catch (err) {
-        console.error('Error getting pot:', err);
-        res.status(500).send({
-            success: false,
-            message: err.toString(),
-        });
+            res.status(200).send({
+                success: true,
+                potAmount,
+            });
+        } catch (err) {
+            console.error('Error getting pot:', err);
+            res.status(500).send({
+                success: false,
+                message: err.toString(),
+            });
+        }
     }
-}
 
     /**
      * Update the pot amount.
@@ -37,10 +37,10 @@ class PotController {
         try {
             const { amount } = req.body;
 
-            if (!amount || amount <= 0) {
+            if (amount === undefined || isNaN(amount)) {
                 return res.status(400).send({
                     success: false,
-                    message: "Amount must be greater than 0",
+                    message: "Invalid amount",
                 });
             }
 
@@ -58,7 +58,6 @@ class PotController {
             });
         }
     }
-
 }
 
 export default PotController;

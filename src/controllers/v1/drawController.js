@@ -6,9 +6,6 @@ class DrawController {
         this.draw = new Draw();
     }
 
-    /**
-     * Generate new winning numbers (admin only)
-     */
     async generateWinningNumber(req, res) {
         try {
             const result = await this.draw.generateWinningNumber();

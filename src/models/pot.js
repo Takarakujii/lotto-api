@@ -5,39 +5,42 @@ class Pot {
         this.connection = connection;
     }
 
-    /**
-     * Get the current pot amount.
-     * @returns {Promise<number>} - The current pot amount.
-     */
     async getPot() {
         try {
-            // First check if pot exists
+            // Check if pot exists
             const [potExists] = await this.connection.execute(
                 "SELECT 1 FROM pot LIMIT 1"
             );
-            
-            // If pot doesn't exist, initialize it
+
+            // Initialize if it doesn't exist
             if (potExists.length === 0) {
                 await this.connection.execute(
                     "INSERT INTO pot (pot_amount) VALUES (1000000)"
                 );
             }
-    
-            // Now get the pot amount
+
+            // Get current pot amount
             const [pot] = await this.connection.execute(
                 "SELECT pot_amount FROM pot LIMIT 1"
             );
-            return pot[0].pot_amount;
+
+            let currentPot = pot.length > 0 ? pot[0].pot_amount : 0;
+
+            // ✅ If pot is empty or 0, reset it to 1 million
+            if (!currentPot || currentPot <= 0) {
+                await this.connection.execute(
+                    "UPDATE pot SET pot_amount = 1000000 WHERE pot_id = 1"
+                );
+                currentPot = 1000000;
+            }
+
+            return currentPot;
         } catch (err) {
             console.error("<error> pot.getPot", err);
             throw err;
         }
     }
-    /**
-     * Update the pot amount.
-     * @param {number} amount - The amount to add to the pot.
-     * @returns {Promise<number>} - The updated pot amount.
-     */
+
     async updatePot(amount) {
         try {
             const [result] = await this.connection.execute(
@@ -45,20 +48,24 @@ class Pot {
             );
 
             let currentPot = result.length > 0 ? result[0].pot_amount : 0;
-            let updatedPot = currentPot + amount;    
+            let updatedPot = currentPot + amount;
+
+            // ✅ If pot goes below 0, reset to 1 million
+            if (updatedPot <= 0) {
+                updatedPot = 1000000;
+            }
 
             await this.connection.execute(
-                "UPDATE pot SET pot_amount = ? WHERE pot_id = 1", 
+                "UPDATE pot SET pot_amount = ? WHERE pot_id = 1",
                 [updatedPot]
             );
+
             return updatedPot;
         } catch (err) {
             console.error("<error> pot.updatePot", err);
             throw err;
         }
     }
-
-   
 }
 
 export default Pot;
