@@ -13,18 +13,25 @@ class WinResult {
     async getWinningHistory(userId) {
         try {
             const [winningHistory] = await this.connection.execute(
-                "SELECT * FROM win_result WHERE user_id = ?",
+                `SELECT 
+                    ld.winning_number, 
+                    b.bet_amount AS winning_prize, 
+                    ld.created_at, 
+                    u.username
+                 FROM bets b
+                 JOIN draw ld ON b.draw_id = ld.draw_id
+                 JOIN users u ON b.user_id = u.user_id
+                 WHERE b.user_id = ?
+                 ORDER BY ld.created_at DESC`,  // Sorting by most recent draws
                 [userId]
             );
-
+    
             return winningHistory;
         } catch (err) {
             console.error("<error> winResult.getWinningHistory", err);
             throw err;
         }
     }
-
-    
 }
-
+    
 export default WinResult;
