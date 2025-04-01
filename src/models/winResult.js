@@ -13,14 +13,15 @@ class WinResult {
     async getWinningHistory(userId) {
         try {
             const [winningHistory] = await this.connection.execute(
-                `SELECT 
+               `SELECT 
                     ld.winning_number, 
-                    b.bet_amount AS winning_prize, 
+                    wr.winning_prize,  -- Fetch winning_prize from winresult
                     ld.created_at, 
                     u.username
                  FROM bets b
                  JOIN draw ld ON b.draw_id = ld.draw_id
                  JOIN users u ON b.user_id = u.user_id
+                 JOIN win_result wr ON wr.bet_id = b.bet_id -- Link winresult to bets
                  WHERE b.user_id = ?
                  ORDER BY ld.created_at DESC`,  // Sorting by most recent draws
                 [userId]

@@ -71,14 +71,14 @@ class Draw {
                 numbers.add(Math.floor(Math.random() * 47) + 1);
             }
             
-            
+            /*
             const winningNumber = Array.from(numbers)
                 .map(n => n.toString().padStart(2, "0"))
                 .join("-");
-            
-/*
+            */
+
             const winningNumber = "11-12-13-14-15-16"
-*/
+
             // Create draw record
             const [drawResult] = await this.connection.execute(
                 "INSERT INTO draw (winning_number) VALUES (?)",

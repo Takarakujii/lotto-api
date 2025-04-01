@@ -5,7 +5,6 @@ import authentication from "../../middlewares/authentication.js";
 const drawRouter = new Router();
 const drawController = new DrawController();
 
-// Apply authentication middleware (if needed)
 drawRouter.use(authentication);
 
 // Generate a new winning number
