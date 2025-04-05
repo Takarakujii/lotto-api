@@ -28,7 +28,26 @@ class WinResultController {
         }
     }
 
-    
+    /**
+     * Get all users who have won.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    async getAllWinners(req, res) {
+        try {
+            const winners = await this.winResult.getAllWinners();
+
+            res.status(200).send({
+                success: true,
+                winners,
+            });
+        } catch (err) {
+            res.status(500).send({
+                success: false,
+                message: err.toString(),
+            });
+        }
+    }
 }
 
 export default WinResultController;

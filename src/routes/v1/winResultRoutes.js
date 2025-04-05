@@ -12,4 +12,8 @@ winResultRouter.use(authentication);
 // GET /win-result/history
 winResultRouter.get("/history", winResultController.getWinningHistory.bind(winResultController));
 
+// Get all users who have won
+// GET /win-result/winners
+winResultRouter.get("/winners", winResultController.getAllWinners.bind(winResultController));
+
 export default winResultRouter;

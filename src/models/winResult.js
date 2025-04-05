@@ -29,7 +29,34 @@ class WinResult {
     
             return winningHistory;
         } catch (err) {
-            console.error("<error> winResult.getWinningHistory", err);
+            console.error("<e> winResult.getWinningHistory", err);
+            throw err;
+        }
+    }
+
+    /**
+     * Get all users who have won.
+     * @returns {Promise<Array>} - All users who have won with their winning details.
+     */
+    async getAllWinners() {
+        try {
+            const [winners] = await this.connection.execute(
+               `SELECT 
+                    u.user_id,
+                    u.username,
+                    ld.winning_number, 
+                    wr.winning_prize,
+                    ld.created_at
+                 FROM win_result wr
+                 JOIN bets b ON wr.bet_id = b.bet_id
+                 JOIN users u ON b.user_id = u.user_id
+                 JOIN draw ld ON b.draw_id = ld.draw_id
+                 ORDER BY ld.created_at DESC`
+            );
+    
+            return winners;
+        } catch (err) {
+            console.error("<e> winResult.getAllWinners", err);
             throw err;
         }
     }
